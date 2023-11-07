@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 
-class App extends StatelessWidget {
+class App extends StatefulWidget {
   const App({super.key});
 
   static const iconAssetNames = [
@@ -23,6 +26,26 @@ class App extends StatelessWidget {
   ];
 
   @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  late DateTime dateTime;
+
+  @override
+  void initState() {
+    super.initState();
+
+    dateTime = DateTime.now();
+
+    Timer.periodic(const Duration(minutes: 1), (timer) {
+      setState(() {
+        dateTime = DateTime.now();
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SizedBox(
@@ -34,7 +57,7 @@ class App extends StatelessWidget {
             const Text(
               'Waktu Solat Malaysia',
               style: TextStyle(
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w800,
                 fontSize: 28,
               ),
             ),
@@ -45,7 +68,8 @@ class App extends StatelessWidget {
                 fontSize: 24,
               ),
             ),
-            const Text('7 November 2023, 12:00 PM'),
+            Text(DateFormat('EEEE, d MMMM yyyy | hh:mm a').format(dateTime)),
+            const SizedBox(height: 16),
             Wrap(
               children: [
                 for (int i = 0; i < 6; i++)
@@ -70,7 +94,7 @@ class App extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: SvgPicture.asset(
-                              iconAssetNames[i],
+                              App.iconAssetNames[i],
                               colorFilter: const ColorFilter.mode(
                                 Color(0xffeab308),
                                 BlendMode.srcIn,
@@ -78,7 +102,7 @@ class App extends StatelessWidget {
                               width: 64,
                             ),
                           ),
-                          Text(labels[i]),
+                          Text(App.labels[i]),
                           const Text('5:00 AM'),
                         ],
                       ),
