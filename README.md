@@ -1,4 +1,4 @@
-# app_waktusolat_web
+# Simple Waktu Solat App
 
 A new Flutter project.
 
