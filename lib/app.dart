@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
+import 'components/location_selector_sheet.dart';
+import 'models/jakim_zone.dart';
+import 'services/api_service.dart';
+
 class App extends StatefulWidget {
   const App({super.key});
 
@@ -31,12 +35,18 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   late DateTime dateTime;
+  late JakimZone prayerZone;
 
   @override
   void initState() {
     super.initState();
 
     dateTime = DateTime.now();
+    prayerZone = JakimZone(
+      jakimCode: 'SGR01',
+      negeri: 'Selangor',
+      daerah: 'Gombak, Petaling, Sepang, Hulu Langat, Hulu Selangor, Shah Alam',
+    );
 
     Timer.periodic(const Duration(minutes: 1), (timer) {
       setState(() {
@@ -61,11 +71,33 @@ class _AppState extends State<App> {
                 fontSize: 28,
               ),
             ),
-            const Text(
-              'SGR01: Shah Alam, Puchong, Petaling Jaya, etc.',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 24,
+            InkWell(
+              onTap: () async {
+                // get prayer times list
+                final locations = await ApiService.getLocations();
+                // show change location bottom sheet
+                if (!mounted) return;
+                final jakimCode = await showModalBottomSheet(
+                    context: context,
+                    builder: (_) {
+                      return LocationSelectorSheet(
+                        locations: locations,
+                        currentlySelectedZone: prayerZone.jakimCode,
+                      );
+                    });
+
+                if (jakimCode == null) return;
+
+                setState(() {
+                  prayerZone = jakimCode;
+                });
+              },
+              child: Text(
+                prayerZone.daerah,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
+                ),
               ),
             ),
             Text(DateFormat('EEEE, d MMMM yyyy | hh:mm a').format(dateTime)),
