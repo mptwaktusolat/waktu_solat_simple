@@ -1,3 +1,7 @@
+# Project is archived.
+
+Currently, there is not need for rewriting the waktu solat app just to make the UI simpler.
+
 # Simple Waktu Solat App
 
 A new Flutter project.
